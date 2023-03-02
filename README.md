@@ -1,2 +1,2 @@
-# BOY
-BIS015 Group Project by Bao, Oonagh and Yukari
+# GOBY
+BIS015 Group Project by Gabe, Oonagh, Bao and Yukari
