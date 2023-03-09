@@ -1,0 +1,131 @@
+---
+title: "Bapp"
+output: html_document
+date: "2023-03-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(ggplot2)
+library(shiny)
+library(shinydashboard)
+library(naniar)
+library(janitor)
+library(pdftools)
+```
+```{r}
+install.packages("pdftools")
+```
+
+```{r}
+improve <- read_csv("Final Data .csv")
+```
+
+```{r}
+names(improve)
+```
+
+```{r}
+improve_visibility <- improve %>% 
+  clean_names() %>% 
+  na_if("-999") %>% 
+  select(date, site_name, state,svr_val) %>% 
+  separate(date, into = c("month", "day", "year"))
+improve_visibility
+```
+```{r}
+improve_visibility %>% 
+  count(site_name)
+```
+
+
+```{r}
+improve_visibility %>% 
+  group_by(site_name, year) %>% 
+  filter(site_name=="Death Valley NP") %>% 
+  summarize(mean_std_year= mean(svr_val, na.rm = T)) %>% 
+  ggplot(aes(x=year, y=mean_std_year))+
+  geom_line(group=1)+
+  geom_point()
+  
+```
+
+
+```{r}
+ui <- dashboardPage(
+  dashboardHeader(title = "Visual Range CA"),
+  dashboardSidebar(disable = TRUE),
+  dashboardBody(
+  fluidRow( class="text center",
+  box(title= "Plot Options",width = 2,
+      radioButtons("x", "Choose The Site", choices = c("Agua Tibia", "Bliss SP (TRPA)", "Bliss SP (TRPA)", "Death Valley NP", "Dome Lands Wilderness", "Fresno", "Hoover", "Joshua Tree NP", "Kaiser", "Lake Tahoe Community College", "Lassen Volcanic NP", "Lava Beds NM", "Owens Valley", "Pinnacles NM", "Point Reyes National Seashore", "Redwood NP", "San Gabriel", "San Gorgonio Wilderness", "San Rafael", "Sequoia NP", "Trinity", "Wrightwood", "Yosemite NP")
+)
+),      
+
+box(title = h2("Standard Visual Range Over the Year", align="center"), width = 6, align="center",solidHeader = T,
+plotOutput("plot", width = "600px", height = "500px")
+),
+
+box(title="image", 
+    imageOutput("image", width = "600px", height = "500px"))
+
+) #close fluidrow
+)
+)
+
+
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+  improve_visibility %>% 
+  group_by(site_name, year) %>% 
+  summarize("Mean_Standard_Visual_Range_km"= mean(svr_val, na.rm = T)) %>% 
+  filter(site_name==input$x) %>% 
+  ggplot(aes(x=year, y=Mean_Standard_Visual_Range_km,group=2))+
+  geom_line(color="red", size=1.5, fill="gray",alpha=0.8)+
+  geom_point(size=5)+
+      theme(axis.title.x = element_text(size = 23))+
+      theme(axis.title.y = element_text(size = 23))+
+      theme(axis.text = element_text(size = 10))+
+       labs(y = "Average Standard Visual Range (km)")
+  })
+  output$image <- renderImage({
+    filename <- "yosemite.png"
+    filepath <- paste0("www/", filename)
+    list(src = filepath, width = "100%", height = "auto")
+  }, deleteFile = FALSE)
+    
+  }
+
+shinyApp(ui, server)
+```
+
+
+
+#Standard visual range over the year for each site
+
+
+
+
+
+
+
+```{r}
+getwd()
+```
+
+
+
+
+
+
+
+
+
+
+
