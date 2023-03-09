@@ -16,6 +16,7 @@ library(ggmap)
 library(ggplot2)
 library(lubridate)
 library(dplyr)
+library(ggrepel)
 ```
 
 Loading data
@@ -122,11 +123,13 @@ ggmap(map1)
 `ggmap` works well with `ggplot2`. To add our points we only need to specify the x and y location similar to how we made charts in previous labs. 
 
 **I. Basic map with site locations**
+
 ```{r}
 ggmap(map1) + 
   geom_point(data = visibility_tidy, aes(longitude, latitude), size=1.5) +
   labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA")
-#ggsave("plot.png", width = 5, height = 5)
+
+  #ggsave("plot.png", width = 5, height = 5)
 ```
 
 **II.Basic map with site location and by elevation**
@@ -137,6 +140,23 @@ ggmap(map1) +
   geom_point(data = visibility_tidy, aes(longitude, latitude, colour=elevation), size=2.5) +
   labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA")
 ```
+**III.Basic map with site location and colour name key** - not informative
+```{r}
+ggmap(map1) + 
+  geom_point(data = visibility_tidy, aes(longitude, latitude, colour=site_name), size=2.5) +
+  labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA")
+```
+**IV.Basic map with only ONE site location** - not informative
+```{r}
+visibility_yos <- visibility_tidy %>% 
+  filter(site_name=="Yosemite NP")
+
+  ggmap(map1) + 
+  geom_point(data = visibility_yos, aes(longitude, latitude), size=2.5) +
+  labs(x= "Longitude", y= "Latitude", title="Yosemite Air Quality Research Site")
+```
+
+
 **Saving maps**
 ```{r}
 ggsave("plot.png", width = 5, height = 5) #Saves last plot as 5’ x 5’ file named "plot.png" in working directory.
