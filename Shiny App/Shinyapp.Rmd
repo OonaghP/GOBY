@@ -16,10 +16,11 @@ library(shiny)
 library(shinydashboard)
 library(naniar)
 library(janitor)
-library(pdftools)
-```
-```{r}
-install.packages("pdftools")
+library(readr)
+library(dplyr)
+library(data.table)
+library(reactable)
+library(jpeg)
 ```
 
 ```{r}
@@ -63,22 +64,23 @@ ui <- dashboardPage(
   dashboardBody(
   fluidRow( class="text center",
   box(title= "Plot Options",width = 2,
-      radioButtons("x", "Choose The Site", choices = c("Agua Tibia", "Bliss SP (TRPA)", "Bliss SP (TRPA)", "Death Valley NP", "Dome Lands Wilderness", "Fresno", "Hoover", "Joshua Tree NP", "Kaiser", "Lake Tahoe Community College", "Lassen Volcanic NP", "Lava Beds NM", "Owens Valley", "Pinnacles NM", "Point Reyes National Seashore", "Redwood NP", "San Gabriel", "San Gorgonio Wilderness", "San Rafael", "Sequoia NP", "Trinity", "Wrightwood", "Yosemite NP")
+      radioButtons("x", "Choose The Site", choices = c("Agua Tibia", "Bliss SP (TRPA)", "Bliss SP (TRPA) (RHTS)", "Death Valley NP", "Dome Lands Wilderness", "Fresno", "Hoover", "Joshua Tree NP", "Kaiser", "Lake Tahoe Community College", "Lassen Volcanic NP", "Lava Beds NM", "Owens Valley", "Pinnacles NM", "Point Reyes National Seashore", "Redwood NP", "San Gabriel", "San Gorgonio Wilderness", "San Rafael", "Sequoia NP", "Trinity", "Wrightwood", "Yosemite NP")
 )
 ),      
 
 box(title = h2("Standard Visual Range Over the Year", align="center"), width = 6, align="center",solidHeader = T,
-plotOutput("plot", width = "600px", height = "500px")
+plotOutput("plot", width = "600px", height = "500px")),
+
+box(title="image",
+imageOutput("image"), style ="text-align: center;"
 ),
 
-box(title="image", 
-    imageOutput("image", width = "600px", height = "500px"))
+
+
 
 ) #close fluidrow
 )
 )
-
-
 
 server <- function(input, output, session) {
   output$plot <- renderPlot({
@@ -95,9 +97,9 @@ server <- function(input, output, session) {
        labs(y = "Average Standard Visual Range (km)")
   })
   output$image <- renderImage({
-    filename <- "yosemite.png"
-    filepath <- paste0("www/", filename)
-    list(src = filepath, width = "100%", height = "auto")
+    
+    
+    list(src = "yosemite.jpg", height = "400px", width="500px")
   }, deleteFile = FALSE)
     
   }
@@ -107,17 +109,21 @@ shinyApp(ui, server)
 
 
 
+```{r}
+improve_visibility %>% 
+  group_by(site_name)
+  
+ 
+```
+
+
+
+
+
+
 #Standard visual range over the year for each site
 
 
-
-
-
-
-
-```{r}
-getwd()
-```
 
 
 
