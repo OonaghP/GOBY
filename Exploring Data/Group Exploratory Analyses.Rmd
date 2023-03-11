@@ -484,7 +484,7 @@ server <- function(input, output, session) {
     mean_by_season%>%
       filter(SiteName == input$site)%>%
       ggplot(aes_string("year", input$y, fill="season"))+
-      scale_fill_manual(values=c("#00CCE6", "#9BEB01", "#E6E500", "#EB7500"))+
+      scale_fill_manual(values=c("#EB7500", "#9BEB01", "#E6E500", "#00CCE6"))+
       geom_col(position = "dodge", color="black")+
       theme(axis.title = element_text(size = 16),
             legend.text = element_text(size = 14),
