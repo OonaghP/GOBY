@@ -20,12 +20,13 @@ library(naniar)
 library(lubridate)
 library(dplyr)
 library(RColorBrewer)
+library(paletteer)
 ```
 
 **Loading the Data**
 ```{r}
-visibility <- read.csv("Potential Data/Final Data .csv")
-visibility <- visibility%>%
+visibility <- read_csv("/Users/gqjones/Documents/GitHub/GOBY copy/data/CA_visibility_data.csv")
+visibility_tidy <- visibility%>%
   na_if(-999)
 ```
 
@@ -34,7 +35,7 @@ visibility <- visibility%>%
 ```{r}
 seasons <- c()
 
-for (date in visibility$Date){
+for (date in visibility_tidy$Date){
   date <- mdy(date)
   # Winter Dec 20 - Mar 19 
   if ((month(date) == 12 & day(date) >= 20) | month(date) %in% c(1, 2) | (month(date) == 3 & day(date) <= 19)){
@@ -54,29 +55,29 @@ for (date in visibility$Date){
   }
 }
 
-visibility$season = seasons
+visibility_tidy$season = seasons
 ```
 
 **Separate Dates for plotting**
 ```{r}
-visibility <- visibility%>%
+visibility_tidy <- visibility_tidy%>%
   separate(Date, into = c("month", "day", "year"))
-visibility
+visibility_tidy
 ```
 
 **Explore the functionality of separating by season**
 Finding the mean data per year per season.
 ```{r}
-mean_by_season <- visibility%>%
+mean_by_season <- visibility_tidy%>%
   mutate(SiteName=paste(SiteName, year, sep="_"))%>%
   mutate(SiteName=paste(SiteName, season, sep=" "))%>%
   group_by(SiteName)%>%
-  summarise(mean_ammNO3=mean(ammNO3f_Val, na.rm=T),
-            mean_ammSO4=mean(ammSO4f_Val, na.rm=T),
-            mean_EC=mean(ECf_Val, na.rm=T),
-            mean_OMC=mean(OMCf_Val, na.rm=T),
-            mean_SOIL=mean(SOILf_Val, na.rm=T),
-            mean_SVR=mean(SVR_Val, na.rm=T))%>%
+  summarise("mean_ammNO3_ppb"=mean(ammNO3f_Val, na.rm=T),
+            "mean_ammSO4_ppb"=mean(ammSO4f_Val, na.rm=T),
+            "mean_EC_ppb"=mean(ECf_Val, na.rm=T),
+            "mean_OMC_ppb"=mean(OMCf_Val, na.rm=T),
+            "mean_SOIL_ppb"=mean(SOILf_Val, na.rm=T),
+            "mean_SVR_km"=mean(SVR_Val, na.rm=T))%>%
   as.data.frame()%>%
   separate(SiteName, into = c("SiteName", "year"), sep="_")%>%
   separate(year, into = c("year", "season"), sep=" ")
@@ -98,8 +99,12 @@ mean_by_season_long <- mean_by_season%>%
   pivot_longer(cols= starts_with("mean"), names_to = "metric", values_to = "value")
 
 ui <- fluidPage(
-  selectInput("site", "Select Site Name", choices = unique(visibility$SiteName)),
-  selectInput("y", "Select Visibility Metric", choices = unique(mean_by_season_long$metric), selected = "mean_SVR"),
+  selectInput("site", "Select Site Name", choices = unique(visibility_tidy$SiteName)),
+  selectInput("y", "Select visibility_tidy Metric", 
+              choices = c("Standard Visual Range"="mean_SVR_km", "Ammonium Sulfate" = "mean_ammSO4_ppb", 
+                          "Ammonium Nitrate" = "mean_ammNO3_ppb", "Elemental Cabon" = "mean_EC_ppb", 
+                          "Organic Mass Cabon" = "mean_OMC_ppb", "Dust" = "mean_SOIL_ppb"),
+              selected = "mean_SVR_km"),
   plotOutput("plot", width = "1200px", height = "800px")
 )
 
@@ -109,8 +114,11 @@ server <- function(input, output, session) {
     mean_by_season%>%
       filter(SiteName == input$site)%>%
       ggplot(aes_string("year", input$y, fill="season"))+
+      scale_fill_manual(values=c("#00CCE6", "#9BEB01", "#E6E500", "#EB7500"))+
       geom_col(position = "dodge")+
-      labs(title=paste(input$y, "For", input$site, "by Year"), x="Year")
+      labs(title=paste("Seasonal Metrics by Season for Each Year"), x="Year", 
+           y=paste(str_split_1(input$y, "_")[2], str_split_1(input$y, "_")[3], sep=" "),
+           fill="Season")
   })
 }
 
