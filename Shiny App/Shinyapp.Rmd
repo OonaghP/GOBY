@@ -88,23 +88,7 @@ shinyApp(ui, server, options = list(launch.browser = TRUE))
 
 
 
-```{r}
-improve_visibility %>% 
-  group_by(site_name, year) %>% 
-  summarize("Mean_Standard_Visual_Range_km"= mean(svr_val, na.rm = T)) %>% 
-  filter(site_name=="Yosemite NP") %>% 
-  ggplot(aes(x=year, y=Mean_Standard_Visual_Range_km, group=2, color=Mean_Standard_Visual_Range_km))+
-  geom_line(size=1.5,alpha=0.8)+
-  geom_point(size=5)+
-  theme(axis.title.x = element_text(size = 23))+
-  theme(axis.title.y = element_text(size = 23))+
-  theme(axis.text = element_text(size = 10))+
-  labs(y = "Average Standard Visual Range (km)")+
-  scale_color_gradient(low="blue", high="red")+
-  guides(color = FALSE)+
-  geom_area(alpha=0.1, fill="purple") +
-  scale_fill_gradient(low="blue", high="red")
-```
+
 
 
 
