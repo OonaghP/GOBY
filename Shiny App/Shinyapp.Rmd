@@ -18,17 +18,10 @@ library(naniar)
 library(janitor)
 library(readr)
 library(dplyr)
-library(data.table)
-library(reactable)
-library(jpeg)
 ```
 
 ```{r}
-improve <- read_csv("Final Data .csv")
-```
-
-```{r}
-names(improve)
+improve <- read_csv("CA_visibility_data.csv")
 ```
 
 ```{r}
@@ -37,24 +30,14 @@ improve_visibility <- improve %>%
   na_if("-999") %>% 
   select(date, site_name, state,svr_val) %>% 
   separate(date, into = c("month", "day", "year"))
-improve_visibility
 ```
+
+
 ```{r}
 improve_visibility %>% 
   count(site_name)
 ```
 
-
-```{r}
-improve_visibility %>% 
-  group_by(site_name, year) %>% 
-  filter(site_name=="Death Valley NP") %>% 
-  summarize(mean_std_year= mean(svr_val, na.rm = T)) %>% 
-  ggplot(aes(x=year, y=mean_std_year))+
-  geom_line(group=1)+
-  geom_point()
-  
-```
 
 
 ```{r}
@@ -66,18 +49,14 @@ ui <- dashboardPage(
   box(title= "Plot Options",width = 2,
       radioButtons("x", "Choose The Site", choices = c("Agua Tibia", "Bliss SP (TRPA)", "Bliss SP (TRPA) (RHTS)", "Death Valley NP", "Dome Lands Wilderness", "Fresno", "Hoover", "Joshua Tree NP", "Kaiser", "Lake Tahoe Community College", "Lassen Volcanic NP", "Lava Beds NM", "Owens Valley", "Pinnacles NM", "Point Reyes National Seashore", "Redwood NP", "San Gabriel", "San Gorgonio Wilderness", "San Rafael", "Sequoia NP", "Trinity", "Wrightwood", "Yosemite NP")
 )
-),      
+),  #Close box     
 
 box(title = h2("Standard Visual Range Over the Year", align="center"), width = 6, align="center",solidHeader = T,
 plotOutput("plot", width = "600px", height = "500px")),
 
-box(title="image",
+box(title="", width = 4, height = 625,
 imageOutput("image"), style ="text-align: center;"
 ),
-
-
-
-
 ) #close fluidrow
 )
 )
@@ -99,21 +78,12 @@ server <- function(input, output, session) {
   output$image <- renderImage({
     
     
-    list(src = "yosemite.jpg", height = "400px", width="500px")
+    list(src = "map.png", height = "550px", width="450px")
   }, deleteFile = FALSE)
     
   }
 
-shinyApp(ui, server)
-```
-
-
-
-```{r}
-improve_visibility %>% 
-  group_by(site_name)
-  
- 
+shinyApp(ui, server, options = list(launch.browser = TRUE))
 ```
 
 
@@ -121,7 +91,8 @@ improve_visibility %>%
 
 
 
-#Standard visual range over the year for each site
+
+
 
 
 
