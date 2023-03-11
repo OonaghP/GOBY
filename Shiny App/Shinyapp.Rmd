@@ -36,9 +36,14 @@ improve_visibility <- improve %>%
 
 ```{r}
 ui <- dashboardPage(
-  dashboardHeader(title = "Visual Range CA"),
+  dashboardHeader(title = tags$div(style = "font-size: 30px;",
+    "Visual Range CA")),
   dashboardSidebar(disable = TRUE),
+  
   dashboardBody(
+      tags$head(
+      tags$style(HTML(".box{border-radius: 20px; box-shadow: 5px 5px 10px #888888;}"))),
+      
   fluidRow( class="text center",
   box(title= "Plot Options",width = 2,
       radioButtons("x", "Choose The Site", choices = c("Agua Tibia", "Bliss SP (TRPA)", "Bliss SP (TRPA) (RHTS)", "Death Valley NP", "Dome Lands Wilderness", "Fresno", "Hoover", "Joshua Tree NP", "Kaiser", "Lake Tahoe Community College", "Lassen Volcanic NP", "Lava Beds NM", "Owens Valley", "Pinnacles NM", "Point Reyes National Seashore", "Redwood NP", "San Gabriel", "San Gorgonio Wilderness", "San Rafael", "Sequoia NP", "Trinity", "Wrightwood", "Yosemite NP")
@@ -46,14 +51,14 @@ ui <- dashboardPage(
 ),  #Close box     
 
 box(title = h2("Standard Visual Range Over the Year", align="center"), width = 6, align="center",solidHeader = T,
-plotOutput("plot", width = "600px", height = "500px")),
+plotOutput("plot", width = "550px", height = "525px")),
 
-box(title="", width = 4, height = 625,
+box(title="", width = 4, height = 650,
 imageOutput("image"), style ="text-align: center;"
 ),
 ) #close fluidrow
-)
-)
+) #close dashboardbody
+) #close dashboard page
 
 server <- function(input, output, session) {
   output$plot <- renderPlot({
@@ -64,17 +69,16 @@ server <- function(input, output, session) {
   ggplot(aes(x=year, y=Mean_Standard_Visual_Range_km,group=2, color=Mean_Standard_Visual_Range_km))+
   geom_line(size=1.5,alpha=0.8)+
   geom_point(size=5)+
-      theme(axis.title.x = element_text(size = 23, margin = margin(t = 20)))+
-      theme(axis.title.y = element_text(size = 23,  margin = margin(r = 25)))+
+      theme(axis.title.x = element_text(size = 23, margin = margin(t = 15)))+
+      theme(axis.title.y = element_text(size = 23,  margin = margin(r = 20)))+
       theme(axis.text = element_text(size = 14))+
       labs(y = "Average Standard Visual Range (km)")+
+      labs(x = "Year")+
       scale_color_gradient(low="blue", high="red")+
       guides(color = FALSE)
   })
   output$image <- renderImage({
-    
-    
-    list(src = "map.png", height = "550px", width="500px")
+    list(src = "map.png", height = "570px", width="450px")
   }, deleteFile = FALSE)
     
   }
