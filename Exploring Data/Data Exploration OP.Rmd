@@ -2,7 +2,9 @@
 title: "Data Exploration Oonagh"
 author: "Oonagh Pretorius"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -16,8 +18,6 @@ library(ggmap)
 library(ggplot2)
 library(lubridate)
 library(dplyr)
-library(ggsci)
-library(ggrepel)
 ```
 
 Loading data
@@ -30,8 +30,6 @@ Split date by year:
 visibility_tidy <- visibility %>% 
   separate(date, into= c("month", "day", "year"), sep = "/")
 ```
-
-###TASKS
 
 #### **Data Cleaning**
 
@@ -116,7 +114,7 @@ ggmap(map1)
 ####### Step 2: Adding Points to Base Map
 `ggmap` works well with `ggplot2`. To add our points we only need to specify the x and y location similar to how we made charts in previous labs. 
 
-**I. Basic map with site locations**
+###### **I. Basic map with site locations**
 
 ```{r}
 ggmap(map1) + 
@@ -126,22 +124,23 @@ ggmap(map1) +
   #ggsave("plot.png", width = 5, height = 5)
 ```
 
-**II.Basic map with site location and by elevation**
--must change colours to display better. Choose palette?
--fix labels
+###### **II.Basic map with site location and by elevation**
+
 ```{r}
 ggmap(map1) + 
   geom_point(data = visibility_tidy, aes(longitude, latitude, colour=elevation), size=2.5) +
   labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA")
 ```
-**III.Basic map with site location and colour name key** - not informative - too many sites
+
+###### **III.Basic map with site location and colour name key** - not informative - too many sites
+ 
 ```{r}
 ggmap(map1) + 
   geom_point(data = visibility_tidy, aes(longitude, latitude, colour=site_name), size=2.5) +
   labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA")
 ```
 
-##### **IV.Basic map with only ONE site location**
+###### **IV. Basic map with only ONE site location**
 Example:
 ```{r}
 visibility_yos <- visibility_tidy %>% 
@@ -151,8 +150,9 @@ visibility_yos <- visibility_tidy %>%
   geom_point(data = visibility_yos, aes(longitude, latitude), size=2.5) +
   labs(x= "Longitude", y= "Latitude", title="Yosemite Air Quality Research Site")
 ```
-##### **IV.Basic map with only ONE site location with key**
-Example:
+
+###### **IV. Basic map with only ONE site location with key**
+  Example:
 ```{r}
 visibility_yos <- visibility_tidy %>% 
   filter(site_name=="Yosemite NP")
@@ -168,181 +168,125 @@ ggsave("plot.png", width = 5, height = 5) #Saves last plot as 5’ x 5’ file n
 #Matches file type to file extension.
 ```
 
+#######################################################################################
+#######################################################################################
 
+##### 3. Comparing variables over time by site
 
-
+First, summarise all variables by site and year:
 ```{r}
-visibility3 <- visibility2 %>% 
+visibility2 <- visibility_tidy %>% 
   group_by(site_name, year) %>% 
   summarise(across(c(svr_val, amm_no3f_val, amm_so4f_val, e_cf_val, om_cf_val, soi_lf_val, longitude, latitude), mean, na.rm=T), total=n())
 ```
+Now, we make a separate, faceted graph per variable:
 
 **A) Graph Mean Standard Visual Range over time, faceted by site**
 ```{r}
-visibility3 %>% 
+visibility2 %>% 
   ggplot(aes(x=year, y=svr_val))+
   geom_point(na.rm=TRUE)+
   facet_wrap(~site_name, ncol=4)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   labs(title = "Standard Visual Range over Time",
        x = "Year",
-       y = "Average Standard Visual Range (km)",) #fill by season?
+       y = "Average Standard Visual Range (km)",)
+
+#ggsave("svr_time.png", width = 10, height = 10)
 ```
 **B)Graph Mean Ammonium Nitrate Concentration Over Time** faceted by site
 ```{r}
-visibility3 %>% 
+visibility2 %>% 
   ggplot(aes(x=year, y=amm_no3f_val))+
   geom_point(na.rm=TRUE)+
   facet_wrap(~site_name, ncol=4)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   labs(title = "Ammonium Nitrate Concentration over Time",
        x = "Year",
-       y = "Ammonium Nitrate Concentration (ug/m^3)",) #fill by season?
+       y = "Ammonium Nitrate Concentration (ug/m^3)",)
+
+#ggsave("amno3_time.png", width = 10, height = 10)
 ```
 **C) Graph Mean Ammonium Sulfate Concentration Over Time** faceted by site
 ```{r}
-visibility3 %>% 
+visibility2 %>% 
   ggplot(aes(x=year, y=amm_so4f_val))+
   geom_point(na.rm=TRUE)+
   facet_wrap(~site_name, ncol=4)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   labs(title = "Ammonium Sulfate Concentration over Time",
        x = "Year",
-       y = "Ammonium Sulfate Concentration (ug/m^3)",) #fill by season?
+       y = "Ammonium Sulfate Concentration (ug/m^3)",) 
+
+#ggsave("ammso4_time.png", width = 10, height = 10)
 ```
 
 **D) Graph Mean Elemental Carbon Concentration Over Time** faceted by site
 ```{r}
-visibility3 %>% 
+visibility2 %>% 
   ggplot(aes(x=year, y=e_cf_val))+
   geom_point(na.rm=TRUE)+
   facet_wrap(~site_name, ncol=4)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   labs(title = "Elemental Carbon Concentration over Time",
        x = "Year",
-       y = "Elemental Carbon Concentration (ug/m^3)",) #fill by season?
+       y = "Elemental Carbon Concentration (ug/m^3)",)
+
+#ggsave("ecf_time.png", width = 10, height = 10)
 ```
 ####*Notes: Interesting fluctuations for Lassen, Lava Beds, Point Reyes, Yosemite, Sequoia, Trinity. Link to wildfire data?*
 
-
-
-   "om_cf_val"     "om_cf_unit"    "soi_lf_val
-
-Facet svr_val maps by year?
-
-
+**E) Graph Mean Organic Mass Carbon (fine) Over Time** faceted by site
 ```{r}
 visibility2 %>% 
-  
-ggmap(map1) + 
-  geom_point(data = visibility2, aes(longitude, latitude), size=1.5) +
-  labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA")
-#ggsave("plot.png", width = 5, height = 5)
-```
-```{r}
-ggmap(map1) + 
-  geom_point(data = visibility4, aes(longitude, latitude, colour=mean_svr), size=2.5) +
-  labs(x= "Longitude", y= "Latitude", title="Air Quality Research Site Locations in CA") +
-  facet_wrap(~year)
-```
-
-
-```{r}
-ecosphere %>% 
-  ggplot(aes(x=habitat, y=log10_mass, fill=habitat))+ 
-  geom_boxplot(alpha=0.4)+ 
-  facet_grid(.~habitat)+
+  ggplot(aes(x=year, y=om_cf_val))+
+  geom_point(na.rm=TRUE)+
+  facet_wrap(~site_name, ncol=4)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  labs(title = "Mass by Mass and Habitat",
-       x = NULL,
-       y = "Log 10 Mass",
-       fill = "Habitat")
+  labs(title = "Organic Mass Carbon (fine) over Time",
+       x = "Year",
+       y = "Organic Mass Carbon (fine) Concentration (ug/m^3)",) #fill by season?
+
+#ggsave("omcf_time.png", width = 10, height = 10)
 ```
 
+**F) Graph Mean Fine Soil Particles Over Time** faceted by site
 ```{r}
-ecosphere %>% 
-  ggplot(aes(x=diet, y=log10_mass, fill=migratory_strategy))+ 
-  geom_boxplot(alpha=0.4) + 
-  facet_wrap(~migratory_strategy, ncol=4)+ #ncol is how many column plots you want per line
+visibility2 %>% 
+  ggplot(aes(x=year, y=soi_lf_val))+
+  geom_point(na.rm=TRUE)+
+  facet_wrap(~site_name, ncol=4)+
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  labs(title = "Mass by Diet and Migratory Strategy",
-       x = NULL,
-       y = "Log 10 Mass",
-       fill = "Migratory Strategy")
+  labs(title = "Fine Soil Particles over Time",
+       x = "Year",
+       y = "Fine Soil Particle Concentration (ug/m^3)",)
+#ggsave("soilf_time.png", width = 10, height = 10)
 ```
+##### 4. Plotting the Relationship between Average Standard Visual Range and Elevation
 
-
-
-?plot visibility by elevation
-
-
-
-
-
-
-
-
-
-
+First, summarise SVR by site:
 ```{r}
-map2 <- visibility_tidy %>% 
-  filter(date)
-ggmap(map1, legend = "topleft")
-map2 +
-stat_density2d(
-aes(x = longitude, y = latitude, fill = ..level.., alpha = ..level..),
-size = 2, bins = 4, data = svr_val,
-geom = "polygon"
-)
-overlay <- stat_density2d(
-aes(x = lon, y = lat, fill = ..level.., alpha = ..level..),
-bins = 4, geom = "polygon",
-data = svr_val
-)
+visibility3 <- visibility_tidy %>% 
+  group_by(site_name) %>% 
+  summarise(across(c(svr_val, elevation), mean, na.rm=T), total=n()) %>% 
+   arrange(desc(svr_val))
+visibility3
 ```
 
+Notes: Hoover has the highest overall SVR and Fresno has the lowest.
+
+Now, we can graph the relationship:
 ```{r}
-SiteMap <- ggmap("map1", legend = "topleft")
-siteMap +
-stat_density2d(
-aes(x = longitude, y = latitude, fill = ..level.., alpha = ..level..),
-size = 2, bins = 4, data = svr_val,
-geom = "polygon"
-)
-overlay <- stat_density2d(
-aes(x = lon, y = lat, fill = ..level.., alpha = ..level..),
-bins = 4, geom = "polygon",
-data = svr_val
-)
+visibility3 %>% 
+  ggplot(aes(svr_val, elevation, col=site_name))+
+  geom_point()+
+  labs(title = "Elevation vs. Average Standard Visual Range",
+       x = "Average Standard Visual Range (km)",
+       y = "Elevation (ft)",
+       fill = "Site Name")
+
+#ggsave("svr_elevation.png", width = 8, height = 5)
 ```
-
-
-```{r}
-visibility_tidy$svr_val <- with(visibility_tidy, sqrt(delta_long^2 + delta_lat^2)); l <- ggplot(visibility_tidy, aes(long, lat))
-```
-
-
-```{r}
-
-
-```
-
-```{r}
-
-l + geom_contour_filled(aes(fill = z))
-x, y, alpha, color, fill, group, linetype, size, subgroup
-```
-
-
-
-
-
-
-
-
-
-
-##### 3. what is measured at these sites? Why?
 
 #### **Potential questions**
 
