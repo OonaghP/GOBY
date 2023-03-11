@@ -24,7 +24,7 @@ library(RColorBrewer)
 
 **Loading the Data**
 ```{r}
-visibility <- readr::read_csv("Final Data .csv")
+visibility <- readr::read_csv("CA_visibility_data.csv")
 visibility <- visibility%>%
   na_if(-999)
 ```
@@ -51,12 +51,15 @@ visibility %>%
   geom_point() +
   geom_label(label = "Ferguson Fire",
             x = 8,
-            y = .55,
+            y = .59,
             color = "black",
             fill = NA) +
   labs(title = "Mean Ammonium Nitrate in Yosemite National Park",
        x = "Year",
-       y = "Ammonium Nitrate")
+       y = "Ammonium Nitrate (ug/m^3)")
+
+ggsave("yosemitenp_ammno3.png",
+       plot = last_plot())
 ```
 
 ```{r}
@@ -76,7 +79,10 @@ visibility %>%
             fill = NA) +
   labs(title = "Mean Ammonium Sulfate in Yosemite National Park",
        x = "Year",
-       y = "Ammonium Sulfate")
+       y = "Ammonium Sulfate (ug/m^3)")
+
+ggsave("yosemitenp_ammso4.png",
+       plot = last_plot())
 ```
 ```{r}
 visibility %>% 
@@ -95,7 +101,10 @@ visibility %>%
             fill = NA) +
   labs(title = "Mean OMC in Yosemite National Park",
        x = "Year",
-       y = "Organic Mass by Carbon")
+       y = "Organic Mass by Carbon (ug/m^3)")
+
+ggsave("yosemitenp_omc.png",
+       plot = last_plot())
 ```
 
 Lassen Volcanic National Park - 2020 -> 2021 
@@ -112,12 +121,17 @@ visibility %>%
   geom_point() +
   geom_label(label = "Dixie Fire",
             x = 11,
-            y = .23,
+            y = .22,
             color = "black",
             fill = NA) +
   labs(title = "Mean Ammonium Nitrate in Lassen Volcanic National Park",
        x = "Year",
-       y = "Ammonium Nitrate")
+       y = "Ammonium Nitrate (ug/m^3)")
+
+ggsave("lassenvolcanicnp_ammno3.png",
+       plot = last_plot(),
+       width = 7,
+       height = 5)
 ```
 ```{r}
 visibility %>% 
@@ -131,12 +145,17 @@ visibility %>%
   geom_point() + 
   geom_label(label = "Dixie Fire",
             x = 11,
-            y = .47,
+            y = .465,
             color = "black",
             fill = NA) +
   labs(title = "Mean Ammonium Sulfate in Lassen Volcanic National Park",
        x = "Year",
-       y = "Ammonium Sulfate")
+       y = "Ammonium Sulfate (ug/m^3)")
+
+ggsave("lassenvolcanicnp_ammso4.png",
+       plot = last_plot(),
+       width = 7,
+       height = 5)
 ```
 ```{r}
 visibility %>% 
@@ -150,11 +169,16 @@ visibility %>%
   geom_point() +
   geom_label(label = "Dixie Fire",
             x = 11,
-            y = 6,
+            y = 5.6,
             color = "black",
             fill = NA) +
   labs(title = "Mean OMC in Lassen Volcanic National Park",
        x = "Year",
-       y = "Organic Mass by Carbon")
+       y = "Organic Mass by Carbon (ug/m^3)")
+
+ggsave("lassenvolcanicnp_omc.png",
+       plot = last_plot(),
+       width = 7,
+       height = 5)
 ```
 
