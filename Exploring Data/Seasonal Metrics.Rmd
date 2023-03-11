@@ -25,7 +25,7 @@ library(paletteer)
 
 **Loading the Data**
 ```{r}
-visibility <- read_csv("/Users/gqjones/Documents/GitHub/GOBY copy/data/CA_visibility_data.csv")
+visibility <- read_csv("C:/GitHub Repositories/GOBY - Edits/data/CA_visibility_data.csv")
 visibility_tidy <- visibility%>%
   na_if(-999)
 ```
@@ -89,23 +89,32 @@ Here is our reference graph:
 ```{r}
 mean_by_season%>%
   filter(SiteName=="Fresno")%>%
-  ggplot(aes(year, mean_SVR, fill=season))+
+  ggplot(aes(year, mean_SVR_km, fill=season))+
   geom_col(position = "dodge")
 ```
 
 ```{r}
-# Creating a long pivot so its easier to grab the metrics 
-mean_by_season_long <- mean_by_season%>%
-  pivot_longer(cols= starts_with("mean"), names_to = "metric", values_to = "value")
-
-ui <- fluidPage(
-  selectInput("site", "Select Site Name", choices = unique(visibility_tidy$SiteName)),
-  selectInput("y", "Select visibility_tidy Metric", 
+ui <- dashboardPage(
+  dashboardHeader(title="Seasonal Metrics"),
+  dashboardSidebar(disable = T),
+  dashboardBody(
+    fluidRow( 
+      class="text center",
+      box(
+        selectInput("site", "Select Site Name", choices = unique(visibility_tidy$SiteName))
+        ),
+      box(
+        selectInput("y", "Visibility Metric", 
               choices = c("Standard Visual Range"="mean_SVR_km", "Ammonium Sulfate" = "mean_ammSO4_ppb", 
                           "Ammonium Nitrate" = "mean_ammNO3_ppb", "Elemental Cabon" = "mean_EC_ppb", 
                           "Organic Mass Cabon" = "mean_OMC_ppb", "Dust" = "mean_SOIL_ppb"),
-              selected = "mean_SVR_km"),
-  plotOutput("plot", width = "1200px", height = "800px")
+              selected = "mean_SVR_km")
+      ),
+      box(
+         plotOutput("plot", width = "1400px", height = "400px"), width = 12
+      )
+    )
+  )
 )
 
 server <- function(input, output, session) {
@@ -115,13 +124,17 @@ server <- function(input, output, session) {
       filter(SiteName == input$site)%>%
       ggplot(aes_string("year", input$y, fill="season"))+
       scale_fill_manual(values=c("#00CCE6", "#9BEB01", "#E6E500", "#EB7500"))+
-      geom_col(position = "dodge")+
-      labs(title=paste("Seasonal Metrics by Season for Each Year"), x="Year", 
+      geom_col(position = "dodge", color="black")+
+      theme(axis.title = element_text(size = 16),
+            legend.text = element_text(size = 14),
+            legend.title = element_text(size = 16),
+            legend.background = element_rect(fill = "#F1F1F1"))+
+      labs(x="Year", 
            y=paste(str_split_1(input$y, "_")[2], str_split_1(input$y, "_")[3], sep=" "),
            fill="Season")
   })
 }
 
-shinyApp(ui, server)
+shinyApp(ui, server, options = list(launch.browser = TRUE))
 ```
 
