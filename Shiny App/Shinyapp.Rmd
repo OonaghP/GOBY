@@ -48,7 +48,7 @@ shinyApp(ui, server)
 
 
 ```{r}
-ui <- fluidPage(imageOutput("picture", height = "550px", width = "100%"),
+ui <- fluidPage(imageOutput("picture", height = "600px", width = "100%"),
                 dashboardPage( skin = "black",
  dashboardHeader(disable = TRUE),
   dashboardSidebar(disable = TRUE),
