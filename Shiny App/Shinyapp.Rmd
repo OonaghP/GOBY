@@ -31,19 +31,7 @@ improve_visibility <- improve %>%
   select(date, site_name, state,svr_val) %>% 
   separate(date, into = c("month", "day", "year"))
 ```
-```{r}
-library(shiny)
 
-ui <- fluidPage(
-  
-)
-
-server <- function(input, output, session) {
-  
-}
-
-shinyApp(ui, server)
-```
 
 
 
@@ -60,12 +48,12 @@ ui <- fluidPage(imageOutput("picture", height = "600px", width = "100%"),
                       ))),
     
   fluidRow( class="text center",
-  box(title= "Plot Options",width = 2,
+  box(width = 2, height = 650,
       radioButtons("x", "Choose The Site", choices = c("Agua Tibia", "Bliss SP (TRPA)", "Bliss SP (TRPA) (RHTS)", "Death Valley NP", "Dome Lands Wilderness", "Fresno", "Hoover", "Joshua Tree NP", "Kaiser", "Lake Tahoe Community College", "Lassen Volcanic NP", "Lava Beds NM", "Owens Valley", "Pinnacles NM", "Point Reyes National Seashore", "Redwood NP", "San Gabriel", "San Gorgonio Wilderness", "San Rafael", "Sequoia NP", "Trinity", "Wrightwood", "Yosemite NP")
 )
 ),  #Close box     
 
-box(title = h2("Standard Visual Range Over the Year", align="center"), width = 6, align="center",solidHeader = T,
+box(title = h2("Standard Visual Range Over the Year", align="center"), width = 6, height= 650, align="center",solidHeader = T,
 plotOutput("plot", width = "550px", height = "525px")),
 
 box(title="", width = 4, height = 650,
