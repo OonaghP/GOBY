@@ -467,8 +467,8 @@ ui <- dashboardPage(
       box(
         selectInput("y", "Visibility Metric", 
               choices = c("Standard Visual Range"="mean_SVR_km", "Ammonium Sulfate" = "mean_ammSO4_ppb", 
-                          "Ammonium Nitrate" = "mean_ammNO3_ppb", "Elemental Cabon" = "mean_EC_ppb", 
-                          "Organic Mass Cabon" = "mean_OMC_ppb", "Dust" = "mean_SOIL_ppb"),
+                          "Ammonium Nitrate" = "mean_ammNO3_ppb", "Elemental Carbon" = "mean_EC_ppb", 
+                          "Organic Mass Carbon" = "mean_OMC_ppb", "Dust" = "mean_SOIL_ppb"),
               selected = "mean_SVR_km")
       ),
       box(
