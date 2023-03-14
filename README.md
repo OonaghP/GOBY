@@ -15,3 +15,5 @@ Data were sourced from the Interagency Monitoring of Protected Visual Environmen
 CODE BOOK
 See "Visibility READme.docx" in "data" folder
 
+REFERENCES
+See "Visibility READme.docx" in "data" folder
